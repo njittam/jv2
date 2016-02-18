@@ -2,6 +2,7 @@ package com.rsdt.jotial;
 
 import android.app.Application;
 import android.content.Context;
+import android.location.Location;
 
 import com.rsdt.jotial.communication.area348.Auth;
 import com.rsdt.jotial.communication.area348.UserControl;
@@ -34,6 +35,11 @@ public class JotiApp extends Application {
      * The UserControl class for the App, it retrieves and holds the user's info.
      * */
     public static UserControl UserControl = new UserControl();
+    private static Location lastLocation;
+
+    public static void setLastLocation(Location lastLocation) {
+        JotiApp.lastLocation = lastLocation;
+    }
 
     @Override
     public void onCreate() {

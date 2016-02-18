@@ -1,6 +1,7 @@
 package com.rsdt.jotial.communication.area348.util;
 
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -29,37 +30,38 @@ public class SyncUtil {
 
     /**
      * Sends the given location to the server.
+     * @param location the location of the hunter
      * */
-    public static void sendHunterLocation(LatLng location)
+    public static void sendHunterLocation(Location location)
     {
-        /**
+        /*
          * Check if we have auth.
          * */
         if(JotiApp.Auth.isAuth())
         {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(JotiApp.getContext());
 
-            /**
+            /*
              * Get the hunt name out of the preferences.
              * */
             String hunterName = preferences.getString("pref_map_hunt_name", null);
 
-            /**
+            /*
              * Check the hunter name.
              * */
             if(hunterName != null && !hunterName.isEmpty())
             {
-                /**
+                /*
                  * Construct json object.
                  * */
                 JsonObject object = new JsonObject();
                 object.addProperty("SLEUTEL", JotiApp.Auth.getKey());
                 object.addProperty("hunter", hunterName);
-                object.addProperty("latitude", Double.toString(location.latitude));
-                object.addProperty("longitude", Double.toString(location.longitude));
+                object.addProperty("latitude", Double.toString(location.getLatitude()));
+                object.addProperty("longitude", Double.toString(location.getLongitude()));
                 object.addProperty("icon", preferences.getString("pref_account_icon", "0"));
 
-                /**
+                /*
                  * Queue in and preform the request with the hunter's location data.
                  * */
                 LinkBuilder.setRoot(Area348.API_V2_ROOT);
@@ -67,7 +69,7 @@ public class SyncUtil {
                 MapManager.getApiManager().addListener(new ApiManager.OnApiTaskCompleteCallback() {
                     @Override
                     public void onApiTaskCompleted(ArrayList<ApiResult> results, String origin) {
-                        /**
+                        /*
                          * Write to the log a location has been sent.
                          * */
                         Log.i("LocationSender", "The location has been sent.");
@@ -80,7 +82,7 @@ public class SyncUtil {
                 });
                 MapManager.getApiManager().preform();
 
-                /**
+                /*
                  * Write to the log, that a location is being sent.
                  * */
                 Log.i("LocationSender", "Sending location " + location + " to the server");
@@ -92,30 +94,48 @@ public class SyncUtil {
         }
         else
         {
-            /**
+            /*
              * Require auth.
              * */
             JotiApp.Auth.requireAuth();
         }
     }
 
+    /**
+     * send a spot Location
+     * @param location the Location of the Vos
+     * @param info info over de vos
+     */
+    public static void sendVosLocation(LatLng location, String info){
+        String deelgebied =  "x";
+        String icon = "";
+        sendVosLocation(location,deelgebied,info,icon);
+    }
+
+    /**
+     * send a spot Location
+     * @param location  the Location of the Vos
+     * @param deelgebied het deelgebied van de Vos
+     * @param info info over de vos
+     * @param icon ?? de locatie van het icon op de server ??
+     */
     public static void sendVosLocation(LatLng location, String deelgebied, String info, String icon)
     {
-        /**
+        /*
          * Check if the user is auth.
          * */
         if(JotiApp.Auth.isAuth())
         {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(JotiApp.getContext());
 
-            /**
+            /*
              * Get the hunt name out of the preferences.
              * */
             String hunterName = preferences.getString("pref_map_hunt_name", null);
 
             if(hunterName != null && !hunterName.isEmpty())
             {
-                /**
+                /*
                  * Construct json object.
                  * */
                 JsonObject object = new JsonObject();
@@ -127,7 +147,7 @@ public class SyncUtil {
                 object.addProperty("info", info);
                 object.addProperty("icon", icon);
 
-                /**
+                /*
                  * Queue in and preform the request with the hunter's location data.
                  * */
                 LinkBuilder.setRoot(Area348.API_V2_ROOT);
@@ -135,7 +155,7 @@ public class SyncUtil {
                 MapManager.getApiManager().addListener(new ApiManager.OnApiTaskCompleteCallback() {
                     @Override
                     public void onApiTaskCompleted(ArrayList<ApiResult> results, String origin) {
-                        /**
+                        /*
                          * Write to the log a location has been sent.
                          * */
                         Log.i("LocationSender", "The location has been sent.");
@@ -152,7 +172,7 @@ public class SyncUtil {
         }
         else
         {
-            /**
+            /*
              * User isn't authenticated, require auth.
              * */
             JotiApp.Auth.requireAuth();

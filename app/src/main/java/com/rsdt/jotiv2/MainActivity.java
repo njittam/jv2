@@ -2,6 +2,7 @@ package com.rsdt.jotiv2;
 
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -80,7 +81,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        //TODO service veranderen.
+        Intent StartServiceIntent = new Intent(this, LocationService.class);
+        startService(StartServiceIntent);
 
         /**
          * Check if the StaticPart has been initialized,
